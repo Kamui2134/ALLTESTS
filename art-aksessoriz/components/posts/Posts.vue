@@ -15,7 +15,11 @@
 		</div>
 
 		<!-- Контейнер с прокручиваемой таблицей -->
-		<div class="w-full flex-1 overflow-y-scroll border border-collapse">
+		<div
+			class="w-full flex-1 overflow-y-scroll border border-collapse relative"
+		>
+			<!-- <component :is="Spinner" :loading="loading" /> -->
+			<Spinner :loading="loading"/>
 			<table class="table-fixed w-full border border-collapse">
 				<tbody>
 					<tr
@@ -36,8 +40,15 @@
 		</div>
 
 		<!-- Пагинация -->
-		<div class="select-none flex flex-row justify-end items-center h-[64px] w-[full] mr-4">
-			<button class="h-[2rem] w-[4rem] border-2 rounded-md" @click="prevClickHandler">Prev</button>
+		<div
+			class="select-none flex flex-row justify-end items-center h-[64px] w-[full] mr-4"
+		>
+			<button
+				class="h-[2rem] w-[4rem] border-2 rounded-md"
+				@click="prevClickHandler"
+			>
+				Prev
+			</button>
 			<ol class="flex m-[8px]">
 				<li
 					v-for="n in pagesCount"
@@ -52,13 +63,19 @@
 					{{ n + shift }}
 				</li>
 			</ol>
-			<button class="h-[2rem] w-[4rem] border-2 rounded-md" @click="nextClickHandler">Next</button>
+			<button
+				class="h-[2rem] w-[4rem] border-2 rounded-md"
+				@click="nextClickHandler"
+			>
+				Next
+			</button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { Post } from './post'
+import { Spinner } from '#components'
 
 const { $axiosPlugin } = useNuxtApp()
 
@@ -67,22 +84,23 @@ const pagesCount: number = 5
 
 let posts = ref<Array<Post>>([])
 let currentPage = ref(1)
-let loading: boolean = false
+let loading = ref(true)
 // переменная считающая сдвиг начала массива
 let shift = ref(0)
 
 async function fetchPosts(): Promise<void> {
-	let loading = true
+	loading.value = true
 
 	try {
-
+		let response = await $axiosPlugin.get('/post')
+		for (let post of response.data) {
+			let temp = new Post(post.userId, post.id, post.title, post.body)
+			posts.value.push(temp)
+		}
 	} catch (error) {
-		alert("")
-	}
-	let response = await $axiosPlugin.get('/posts')
-	for (let post of response.data) {
-		let temp = new Post(post.userId, post.id, post.title, post.body)
-		posts.value.push(temp)
+		alert('Не удалось получить посты!')
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -123,4 +141,3 @@ function paginationClickHandler(event: MouseEvent) {
 	}
 }
 </script>
-

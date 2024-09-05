@@ -92,7 +92,7 @@ async function fetchPosts(): Promise<void> {
 	loading.value = true
 
 	try {
-		let response = await $axiosPlugin.get('/post')
+		let response = await $axiosPlugin.get('/posts')
 		for (let post of response.data) {
 			let temp = new Post(post.userId, post.id, post.title, post.body)
 			posts.value.push(temp)

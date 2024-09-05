@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body {
-    @apply w-screen
+    max-width: 100vw;
 }

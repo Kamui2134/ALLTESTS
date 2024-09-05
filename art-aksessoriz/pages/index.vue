@@ -1,5 +1,5 @@
 <template>
-	<div class="w-100 flex justify-center">
+	<div class="w- max-h-[100vh] flex justify-center">
         <div class="w-[1820px]">
             <Posts/>
         </div>

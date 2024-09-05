@@ -25,7 +25,7 @@
 					<tr
 						v-if="posts.length != null"
 						v-for="post in posts.slice(
-							(currentPage - 1) * postsCount,
+							currentPage * postsCount,
 							(currentPage + 1) * postsCount
 						)"
 						:key="post.id"

@@ -9,6 +9,7 @@
 
 <script setup>
 let props = defineProps({
-    loading: Boolean
+    loading: Boolean,
+    required: true
 })
 </script>

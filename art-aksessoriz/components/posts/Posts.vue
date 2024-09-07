@@ -19,17 +19,23 @@
 			class="w-full flex-1 overflow-y-scroll border border-collapse relative"
 		>
 			<!-- <component :is="Spinner" :loading="loading" /> -->
-			<Spinner/>
+			<Spinner />
 			<table class="table-fixed w-full border border-collapse">
 				<tbody>
 					<tr
-						v-if="posts.length != null"
+						v-if="posts.length != null && filteredPosts.length === 0"
 						v-for="post in posts.slice(
-							currentPage * postsCount,
-							(currentPage + 1) * postsCount
+							(currentPage - 1) * postsCount,
+							(currentPage) * postsCount
 						)"
 						:key="post.id"
 					>
+						<td class="py-2 border">{{ post.userId }}</td>
+						<td class="py-2 border">{{ post.id }}</td>
+						<td class="py-2 border">{{ post.title }}</td>
+						<td class="py-2 border">{{ post.body }}</td>
+					</tr>
+					<tr v-else v-for="post in filteredPosts" :key="post.userId">
 						<td class="py-2 border">{{ post.userId }}</td>
 						<td class="py-2 border">{{ post.id }}</td>
 						<td class="py-2 border">{{ post.title }}</td>
@@ -39,36 +45,47 @@
 			</table>
 		</div>
 
-		<!-- Пагинация -->
 		<div
-			class="select-none flex flex-row justify-end items-center h-[64px] w-[full] mr-4"
+			class="select-none flex flex-row justify-between items-center h-[64px] w-[full] mr-4"
 		>
-			<button
-				class="h-[2rem] w-[4rem] border-2 rounded-md"
-				@click="prevClickHandler"
-			>
-				Prev
-			</button>
-			<ol class="flex m-[8px]">
-				<li
-					v-for="n in pagesCount"
-					class="border cursor-pointer px-2"
-					:class="[
-						{ 'bg-slate-500': currentPage === n + shift },
-						{ 'text-white': currentPage === n + shift },
-					]"
-					@click="paginationClickHandler"
-					:key="n"
+			<!-- Поиск по id -->
+			<div>
+				<input
+					type="text"
+					@change="searchById($event)"
+					placeholder="Введите id..."
+				/>
+			</div>
+
+			<!-- Пагинация -->
+			<div class="flex flex-row items-center">
+				<button
+					class="h-[2rem] w-[4rem] border-2 rounded-md"
+					@click="prevClickHandler"
 				>
-					{{ n + shift }}
-				</li>
-			</ol>
-			<button
-				class="h-[2rem] w-[4rem] border-2 rounded-md"
-				@click="nextClickHandler"
-			>
-				Next
-			</button>
+					Prev
+				</button>
+				<ol class="flex m-[8px]">
+					<li
+						v-for="n in pagesCount"
+						class="border cursor-pointer px-2"
+						:class="[
+							{ 'bg-slate-500': currentPage === n + shift },
+							{ 'text-white': currentPage === n + shift },
+						]"
+						@click="paginationClickHandler"
+						:key="n"
+					>
+						{{ n + shift }}
+					</li>
+				</ol>
+				<button
+					class="h-[2rem] w-[4rem] border-2 rounded-md"
+					@click="nextClickHandler"
+				>
+					Next
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -77,7 +94,7 @@
 import { Post } from './post'
 import { Spinner } from '#components'
 import { usePostsStore } from '@/stores/posts'
-import { useLoadingStore } from '~/stores/loading';
+import { useLoadingStore } from '~/stores/loading'
 
 let loadingStore = useLoadingStore()
 
@@ -88,16 +105,17 @@ let postsStore = usePostsStore()
 const postsCount: number = 10
 const pagesCount: number = 5
 
-let posts = ref(<Array<Post>>([]))
+let posts = ref(<Array<Post>>[])
 let currentPage = ref(1)
 // переменная считающая сдвиг начала массива
 let shift = ref(0)
+let filteredPosts = ref(<Array<Post>>[]) 
 
 async function fetchPosts(): Promise<void> {
 	loadingStore.changeLoading(true)
 
 	try {
-		let response = await $axiosPlugin.get('/post')
+		let response = await $axiosPlugin.get('/posts')
 		for (let post of response.data) {
 			let temp = new Post(post.userId, post.id, post.title, post.body)
 			posts.value.push(temp)
@@ -145,5 +163,20 @@ function paginationClickHandler(event: MouseEvent) {
 	) {
 		shift.value++
 	}
+}
+function searchById(event: Event) {
+	let id: number = Number((event.target as HTMLInputElement).value)
+	filteredPosts.value = []
+
+	if (id === null) {
+		filteredPosts.value = []
+		return
+	}
+
+	console.log(id)
+	filteredPosts.value = posts.value.filter((post) => {
+		return post.id === id
+	})	
+	console.log(filteredPosts)
 }
 </script>

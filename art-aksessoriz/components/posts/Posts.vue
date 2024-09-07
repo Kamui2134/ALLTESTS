@@ -173,10 +173,8 @@ function searchById(event: Event) {
 		return
 	}
 
-	console.log(id)
 	filteredPosts.value = posts.value.filter((post) => {
 		return post.id === id
 	})	
-	console.log(filteredPosts)
 }
 </script>

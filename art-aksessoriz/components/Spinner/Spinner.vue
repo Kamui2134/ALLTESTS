@@ -1,6 +1,6 @@
 <template>
 	<div
-        v-if="props.loading"
+        v-if="loadingStore.loading"
 		class="w-full h-full absolute bg-black opacity-20 flex justify-center items-center"
 	>
 		<div class="spinner" />
@@ -8,8 +8,7 @@
 </template>
 
 <script setup>
-let props = defineProps({
-    loading: Boolean,
-    required: true
-})
+import { useLoadingStore } from '~/stores/loading';
+
+let loadingStore = useLoadingStore()
 </script>

@@ -19,7 +19,7 @@
 			class="w-full flex-1 overflow-y-scroll border border-collapse relative"
 		>
 			<!-- <component :is="Spinner" :loading="loading" /> -->
-			<Spinner :loading="loading"/>
+			<Spinner/>
 			<table class="table-fixed w-full border border-collapse">
 				<tbody>
 					<tr
@@ -76,31 +76,37 @@
 <script setup lang="ts">
 import { Post } from './post'
 import { Spinner } from '#components'
+import { usePostsStore } from '@/stores/posts'
+import { useLoadingStore } from '~/stores/loading';
+
+let loadingStore = useLoadingStore()
 
 const { $axiosPlugin } = useNuxtApp()
+
+let postsStore = usePostsStore()
 
 const postsCount: number = 10
 const pagesCount: number = 5
 
-let posts = ref<Array<Post>>([])
+let posts = ref(<Array<Post>>([]))
 let currentPage = ref(1)
-let loading = ref(true)
 // переменная считающая сдвиг начала массива
 let shift = ref(0)
 
 async function fetchPosts(): Promise<void> {
-	loading.value = true
+	loadingStore.changeLoading(true)
 
 	try {
-		let response = await $axiosPlugin.get('/posts')
+		let response = await $axiosPlugin.get('/post')
 		for (let post of response.data) {
 			let temp = new Post(post.userId, post.id, post.title, post.body)
 			posts.value.push(temp)
 		}
+		postsStore.posts = posts.value
 	} catch (error) {
 		alert('Не удалось получить посты!')
 	} finally {
-		loading.value = false
+		loadingStore.changeLoading(false)
 	}
 }
 

@@ -26,7 +26,7 @@
 						v-if="posts.length != null && filteredPosts.length === 0"
 						v-for="post in posts.slice(
 							(currentPage - 1) * postsCount,
-							(currentPage) * postsCount
+							currentPage * postsCount
 						)"
 						:key="post.id"
 					>
@@ -87,12 +87,22 @@
 				</button>
 			</div>
 		</div>
+		<!-- Кнопка для модального окна -->
+		<button
+			class="absolute top-4 right-4 bg-cyan-500 text-white"
+			@click="isActive = true"
+		>
+			Open Modal Window
+		</button>
+		<!-- Модальное окно -->
+		<Modal :isActive="isActive" @update:isActive="isActive = $event" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { Post } from './post'
 import { Spinner } from '#components'
+import { Modal } from '#components'
 import { usePostsStore } from '@/stores/posts'
 import { useLoadingStore } from '~/stores/loading'
 
@@ -109,7 +119,9 @@ let posts = ref(<Array<Post>>[])
 let currentPage = ref(1)
 // переменная считающая сдвиг начала массива
 let shift = ref(0)
-let filteredPosts = ref(<Array<Post>>[]) 
+let filteredPosts = ref(<Array<Post>>[])
+// переменная для активации модального окна
+let isActive = ref(false)
 
 async function fetchPosts(): Promise<void> {
 	loadingStore.changeLoading(true)
@@ -173,8 +185,8 @@ function searchById(event: Event) {
 		return
 	}
 
-	filteredPosts.value = posts.value.filter((post) => {
+	filteredPosts.value = posts.value.filter(post => {
 		return post.id === id
-	})	
+	})
 }
 </script>

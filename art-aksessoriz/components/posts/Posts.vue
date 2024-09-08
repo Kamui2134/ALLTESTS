@@ -28,14 +28,13 @@
 							(currentPage - 1) * postsCount,
 							currentPage * postsCount
 						)"
-						:key="post.id"
 					>
 						<td class="py-2 border">{{ post.userId }}</td>
 						<td class="py-2 border">{{ post.id }}</td>
 						<td class="py-2 border">{{ post.title }}</td>
 						<td class="py-2 border">{{ post.body }}</td>
 					</tr>
-					<tr v-else v-for="post in filteredPosts" :key="post.userId">
+					<tr v-else v-for="post in filteredPosts">
 						<td class="py-2 border">{{ post.userId }}</td>
 						<td class="py-2 border">{{ post.id }}</td>
 						<td class="py-2 border">{{ post.title }}</td>
@@ -89,8 +88,7 @@
 		</div>
 		<!-- Кнопка для модального окна -->
 		<button
-			class="absolute
-			 top-1 right-1 bg-blue-600 rounded-md text-white px-4 py-2"
+			class="absolute top-1 right-1 bg-blue-600 rounded-md text-white px-4 py-2"
 			@click="isActive = true"
 		>
 			Add

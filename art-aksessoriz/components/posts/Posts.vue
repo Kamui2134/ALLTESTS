@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full h-[500px] flex flex-col">
+	<div class="w-[1820px] h-[500px] flex flex-col">
 		<!-- Контейнер для заголовка таблицы -->
 		<div class="w-full border border-collapse">
 			<table class="table-fixed w-full border border-collapse">
@@ -89,10 +89,11 @@
 		</div>
 		<!-- Кнопка для модального окна -->
 		<button
-			class="absolute top-4 right-4 bg-cyan-500 text-white"
+			class="absolute
+			 top-1 right-1 bg-blue-600 rounded-md text-white px-4 py-2"
 			@click="isActive = true"
 		>
-			Open Modal Window
+			Add
 		</button>
 		<!-- Модальное окно -->
 		<Modal :isActive="isActive" @update:isActive="isActive = $event" />

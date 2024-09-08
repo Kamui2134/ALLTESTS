@@ -1,12 +1,8 @@
 <template>
-	<div class="w- max-h-[100vh] flex justify-center">
-        <div class="w-[1820px]">
+	<div class="w-screen max-h-[100vh] flex justify-center">
             <Posts/>
-        </div>
-        
 	</div>
 </template>
 
 <script setup lang="ts">
-import { Post } from '~/components/posts/post';
 </script>

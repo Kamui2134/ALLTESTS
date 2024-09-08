@@ -1,12 +1,12 @@
 export class Post {
-	public userId: number
-	public id: number
+	public userId: number | null
+	public id: number | null
 	public title: string
 	public body: string
 
 	constructor(
-		userId: number = 0,
-		id: number = 0,
+		userId: number | null = null,
+		id: number | null = null,
 		title: string = '',
 		body: string = ''
 	) {

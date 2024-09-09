@@ -14,23 +14,22 @@ RUN npm install
 COPY . .
 
 # Собираем проект Nuxt для production
-RUN npm run build
+RUN npm run build && npm run generate
 
 # Используем второй этап для создания меньшего production-образа
-FROM node:20.17 as production-stage
+FROM nginx:1.21.1-alpine as production-stage
 
-# Устанавливаем переменную окружения для production режима
-ENV NODE_ENV=production
+# Удаляем дефолтный nginx.conf
+RUN rm -rf /usr/share/nginx/html/*
 
-# Устанавливаем рабочую директорию
-WORKDIR /app
+# Копируем nginx конфигурацию
+COPY ./nginx/default.conf /etc/nginx/conf.d
 
-# Копируем файлы проекта и зависимости из предыдущего этапа
-COPY --from=build-stage /app/node_modules ./node_modules
-COPY --from=build-stage /app/.output ./.output
+# Копируем статические файлы
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Открываем порт, на котором будет работать Nuxt
-EXPOSE 3000
+# Открываем порт, на котором будет работать nginx
+EXPOSE 80
 
-# Команда для запуска Nuxt в режиме production
-CMD ["node", ".output/server/index.mjs"]
+#Включаем nginx
+CMD ["nginx", "-g", "daemon off;"]
